@@ -65,29 +65,29 @@ def create(session, args):
     model, _ = MODELS[args.model]
     missing = [f for f in REQUIRED_ON_CREATE[args.model] if getattr(args, f) is None]
     if missing:
-        return f"Missing required arguments for {args.model}: {', '.join(missing)}"
+        return f"Не вистачає обов'язкових аргументів для {args.model}: {', '.join(missing)}"
     fields = collect_fields(args, args.model)
     if args.model == "Grade":
         fields.setdefault("grade_date", date.today())
     obj = model(**fields)
     session.add(obj)
     session.commit()
-    return f"Created: {obj}"
+    return f"Створено: {obj}"
 
 
 def list_all(session, args):
     model, _ = MODELS[args.model]
     rows = session.query(model).order_by(model.id).all()
-    return "\n".join(map(repr, rows)) or f"No {args.model} records"
+    return "\n".join(map(repr, rows)) or f"Записів {args.model} немає"
 
 
 def get_or_none(session, args):
     model, _ = MODELS[args.model]
     if args.id is None:
-        return None, "--id is required"
+        return None, "Потрібно вказати --id"
     obj = session.get(model, args.id)
     if obj is None:
-        return None, f"{args.model} with id={args.id} not found"
+        return None, f"{args.model} з id={args.id} не знайдено"
     return obj, None
 
 
@@ -97,11 +97,11 @@ def update(session, args):
         return error
     fields = collect_fields(args, args.model)
     if not fields:
-        return "Nothing to update"
+        return "Немає що оновлювати"
     for attr, value in fields.items():
         setattr(obj, attr, value)
     session.commit()
-    return f"Updated: {obj}"
+    return f"Оновлено: {obj}"
 
 
 def remove(session, args):
@@ -110,7 +110,7 @@ def remove(session, args):
         return error
     session.delete(obj)
     session.commit()
-    return f"Removed: {obj}"
+    return f"Видалено: {obj}"
 
 
 ACTIONS = {"create": create, "list": list_all, "update": update, "remove": remove}
@@ -123,7 +123,7 @@ def main():
             print(ACTIONS[args.action](session, args))
         except IntegrityError as e:
             session.rollback()
-            print(f"Database error: {e.orig}")
+            print(f"Помилка бази даних: {e.orig}")
 
 
 if __name__ == "__main__":
