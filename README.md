@@ -1,20 +1,20 @@
 # hw_sw_7 — SQLAlchemy + Alembic + PostgreSQL
 
-Students / groups / teachers / subjects / grades database built with SQLAlchemy ORM,
-Alembic migrations, Faker seeding, ORM queries and an argparse CRUD CLI.
+База даних студентів, груп, викладачів, предметів і оцінок на SQLAlchemy ORM:
+міграції Alembic, наповнення через Faker, ORM-запити та CLI для CRUD-операцій на argparse.
 
-## Structure
+## Структура
 
-| File | Purpose |
+| Файл | Призначення |
 |---|---|
-| `src/models.py` | SQLAlchemy models: `Group`, `Student`, `Teacher`, `Subject`, `Grade` |
-| `src/db.py` | Engine and `Session` (URL from `DATABASE_URL` env var) |
-| `migrations/` | Alembic migrations |
-| `seed.py` | Fills the DB with random data (Faker, SQLAlchemy sessions) |
-| `my_select.py` | Queries `select_1` … `select_10` + extra `select_11`, `select_12` |
-| `main.py` | CLI for CRUD operations on every model |
+| `src/models.py` | Моделі SQLAlchemy: `Group`, `Student`, `Teacher`, `Subject`, `Grade` |
+| `src/db.py` | Engine і `Session` (URL зі змінної оточення `DATABASE_URL`) |
+| `migrations/` | Міграції Alembic |
+| `seed.py` | Наповнення бази випадковими даними (Faker, сесії SQLAlchemy) |
+| `my_select.py` | Запити `select_1` … `select_10` + додаткові `select_11`, `select_12` |
+| `main.py` | CLI для CRUD-операцій з усіма моделями |
 
-## Setup
+## Запуск
 
 ```bash
 docker run --name hw7-postgres -p 5432:5432 -e POSTGRES_PASSWORD=hw7secret -e POSTGRES_DB=hw7 -d postgres
@@ -24,23 +24,23 @@ python seed.py
 python my_select.py
 ```
 
-Default connection: `postgresql+psycopg2://postgres:hw7secret@localhost:5432/hw7`.
-Override with the `DATABASE_URL` environment variable (e.g. `sqlite:///hw7.db`).
+Підключення за замовчуванням: `postgresql+psycopg2://postgres:hw7secret@localhost:5432/hw7`.
+Його можна змінити змінною оточення `DATABASE_URL` (наприклад, `sqlite:///hw7.db`).
 
-## Queries (`my_select.py`)
+## Запити (`my_select.py`)
 
-1. Top 5 students by average grade across all subjects
-2. Student with the highest average grade in a subject
-3. Average grade per group in a subject
-4. Average grade over the whole grades table
-5. Courses taught by a teacher
-6. Students in a group
-7. Grades of a group's students in a subject
-8. Average grade a teacher gives across their subjects
-9. Courses a student attends
-10. Courses a teacher teaches to a student
-11. *(extra)* Average grade a teacher gives to a student
-12. *(extra)* Grades of a group in a subject at the last lesson (scalar subquery)
+1. 5 студентів із найбільшим середнім балом з усіх предметів
+2. Студент із найвищим середнім балом з певного предмета
+3. Середній бал у групах з певного предмета
+4. Середній бал на потоці (по всій таблиці оцінок)
+5. Курси, які читає певний викладач
+6. Список студентів у певній групі
+7. Оцінки студентів в окремій групі з певного предмета
+8. Середній бал, який ставить певний викладач зі своїх предметів
+9. Список курсів, які відвідує певний студент
+10. Список курсів, які певному студенту читає певний викладач
+11. *(додатково)* Середній бал, який певний викладач ставить певному студентові
+12. *(додатково)* Оцінки студентів у певній групі з певного предмета на останньому занятті (scalar-select)
 
 ## CLI (`main.py`)
 
@@ -57,4 +57,4 @@ py main.py -a create -m Subject -n 'Art' --teacher_id 1
 py main.py -a create -m Grade -g 10 --student_id 1 --subject_id 1 -d 2026-05-20
 ```
 
-Other options: `--group_id`, `--teacher_id`, `--student_id`, `--subject_id`, `-g/--grade`, `-d/--date` (YYYY-MM-DD, defaults to today for grades).
+Інші параметри: `--group_id`, `--teacher_id`, `--student_id`, `--subject_id`, `-g/--grade`, `-d/--date` (формат YYYY-MM-DD; для оцінки за замовчуванням — сьогоднішня дата).

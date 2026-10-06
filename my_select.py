@@ -7,7 +7,7 @@ from src.models import Grade, Group, Student, Subject, Teacher
 
 
 def select_1(session):
-    """Top 5 students by average grade across all subjects."""
+    """5 студентів із найбільшим середнім балом з усіх предметів."""
     return (
         session.query(
             Student.fullname, func.round(func.avg(Grade.grade), 2).label("avg_grade")
@@ -22,7 +22,7 @@ def select_1(session):
 
 
 def select_2(session, subject_id: int):
-    """Student with the highest average grade in a given subject."""
+    """Студент із найвищим середнім балом з певного предмета."""
     return (
         session.query(
             Subject.name,
@@ -41,7 +41,7 @@ def select_2(session, subject_id: int):
 
 
 def select_3(session, subject_id: int):
-    """Average grade per group in a given subject."""
+    """Середній бал у групах з певного предмета."""
     return (
         session.query(
             Group.name,
@@ -60,12 +60,12 @@ def select_3(session, subject_id: int):
 
 
 def select_4(session):
-    """Average grade over the whole grades table."""
+    """Середній бал на потоці (по всій таблиці оцінок)."""
     return session.query(func.round(func.avg(Grade.grade), 2).label("avg_grade")).all()
 
 
 def select_5(session, teacher_id: int):
-    """Courses taught by a given teacher."""
+    """Курси, які читає певний викладач."""
     return (
         session.query(Teacher.fullname, Subject.name)
         .select_from(Subject)
@@ -77,7 +77,7 @@ def select_5(session, teacher_id: int):
 
 
 def select_6(session, group_id: int):
-    """Students in a given group."""
+    """Список студентів у певній групі."""
     return (
         session.query(Group.name, Student.id, Student.fullname)
         .select_from(Student)
@@ -89,7 +89,7 @@ def select_6(session, group_id: int):
 
 
 def select_7(session, group_id: int, subject_id: int):
-    """Grades of students in a given group in a given subject."""
+    """Оцінки студентів в окремій групі з певного предмета."""
     return (
         session.query(
             Group.name, Subject.name, Student.fullname, Grade.grade, Grade.grade_date
@@ -105,7 +105,7 @@ def select_7(session, group_id: int, subject_id: int):
 
 
 def select_8(session, teacher_id: int):
-    """Average grade a given teacher gives across their subjects."""
+    """Середній бал, який ставить певний викладач зі своїх предметів."""
     return (
         session.query(
             Teacher.fullname, func.round(func.avg(Grade.grade), 2).label("avg_grade")
@@ -120,7 +120,7 @@ def select_8(session, teacher_id: int):
 
 
 def select_9(session, student_id: int):
-    """Courses a given student attends."""
+    """Список курсів, які відвідує певний студент."""
     return (
         session.query(Student.fullname, Subject.name)
         .select_from(Grade)
@@ -134,7 +134,7 @@ def select_9(session, student_id: int):
 
 
 def select_10(session, student_id: int, teacher_id: int):
-    """Courses a given teacher teaches to a given student."""
+    """Список курсів, які певному студенту читає певний викладач."""
     return (
         session.query(Student.fullname, Teacher.fullname, Subject.name)
         .select_from(Grade)
@@ -148,11 +148,11 @@ def select_10(session, student_id: int, teacher_id: int):
     )
 
 
-# ---------- Additional task ----------
+# ---------- Додаткове завдання ----------
 
 
 def select_11(session, teacher_id: int, student_id: int):
-    """Average grade a given teacher gives to a given student."""
+    """Середній бал, який певний викладач ставить певному студентові."""
     return (
         session.query(
             Teacher.fullname,
@@ -170,8 +170,8 @@ def select_11(session, teacher_id: int, student_id: int):
 
 
 def select_12(session, group_id: int, subject_id: int):
-    """Grades of students in a given group in a given subject at the last lesson."""
-    # scalar-select: date of the last lesson of this group in this subject
+    """Оцінки студентів у певній групі з певного предмета на останньому занятті."""
+    # scalar-select: дата останнього заняття цієї групи з цього предмета
     last_date = (
         select(func.max(Grade.grade_date))
         .join(Student)

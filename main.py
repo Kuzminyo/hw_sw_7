@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from src.db import Session
 from src.models import Grade, Group, Student, Subject, Teacher
 
-# model name -> (class, {cli argument -> model attribute})
+# назва моделі -> (клас, {аргумент CLI -> атрибут моделі})
 MODELS = {
     "Group": (Group, {"name": "name"}),
     "Teacher": (Teacher, {"name": "fullname"}),
@@ -33,26 +33,26 @@ REQUIRED_ON_CREATE = {
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="CRUD CLI for the university database")
+    parser = argparse.ArgumentParser(description="CLI для CRUD-операцій з базою даних університету")
     parser.add_argument(
         "-a", "--action", required=True, choices=["create", "list", "update", "remove"]
     )
     parser.add_argument("-m", "--model", required=True, choices=list(MODELS))
-    parser.add_argument("--id", type=int, help="record id (for update/remove)")
-    parser.add_argument("-n", "--name", help="name / fullname")
+    parser.add_argument("--id", type=int, help="id запису (для update/remove)")
+    parser.add_argument("-n", "--name", help="назва / повне ім'я")
     parser.add_argument("--group_id", type=int)
     parser.add_argument("--teacher_id", type=int)
     parser.add_argument("--student_id", type=int)
     parser.add_argument("--subject_id", type=int)
     parser.add_argument("-g", "--grade", type=int)
     parser.add_argument(
-        "-d", "--date", type=date.fromisoformat, help="grade date, YYYY-MM-DD"
+        "-d", "--date", type=date.fromisoformat, help="дата оцінки, YYYY-MM-DD"
     )
     return parser.parse_args()
 
 
 def collect_fields(args, model_name):
-    """Return {model attribute: value} for the arguments that were passed."""
+    """Повертає {атрибут моделі: значення} для переданих аргументів."""
     _, mapping = MODELS[model_name]
     return {
         attr: getattr(args, arg)

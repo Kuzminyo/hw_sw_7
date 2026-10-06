@@ -31,7 +31,7 @@ def random_date(start: date, end: date) -> date:
 
 
 def clear_tables(session):
-    """Clear tables (and reset ids) so the script can be re-run."""
+    """Очищає таблиці (і скидає id), щоб скрипт можна було запускати повторно."""
     if session.bind.dialect.name == "postgresql":
         session.execute(
             text("TRUNCATE grades, subjects, students, teachers, groups RESTART IDENTITY")
@@ -47,7 +47,7 @@ def seed():
 
         groups = [Group(name=name) for name in GROUP_NAMES]
         teachers = [Teacher(fullname=fake.name()) for _ in range(NUMBER_TEACHERS)]
-        # every teacher gets at least one subject
+        # кожен викладач читає щонайменше один предмет
         subject_teachers = teachers + [
             random.choice(teachers) for _ in range(len(SUBJECT_NAMES) - len(teachers))
         ]
