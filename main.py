@@ -23,6 +23,16 @@ MODELS = {
     ),
 }
 
+# Українські назви моделей для повідомлень:
+# (родовий однини, знахідний однини, родовий множини)
+MODEL_NAMES_UA = {
+    "Group": ("групи", "групу", "груп"),
+    "Teacher": ("викладача", "викладача", "викладачів"),
+    "Student": ("студента", "студента", "студентів"),
+    "Subject": ("предмета", "предмет", "предметів"),
+    "Grade": ("оцінки", "оцінку", "оцінок"),
+}
+
 REQUIRED_ON_CREATE = {
     "Group": ["name"],
     "Teacher": ["name"],
@@ -65,7 +75,7 @@ def create(session, args):
     model, _ = MODELS[args.model]
     missing = [f for f in REQUIRED_ON_CREATE[args.model] if getattr(args, f) is None]
     if missing:
-        return f"Не вистачає обов'язкових аргументів для {args.model}: {', '.join(missing)}"
+        return f"Не вистачає обов'язкових аргументів для {MODEL_NAMES_UA[args.model][0]}: {', '.join(missing)}"
     fields = collect_fields(args, args.model)
     if args.model == "Grade":
         fields.setdefault("grade_date", date.today())
@@ -78,7 +88,7 @@ def create(session, args):
 def list_all(session, args):
     model, _ = MODELS[args.model]
     rows = session.query(model).order_by(model.id).all()
-    return "\n".join(map(repr, rows)) or f"Записів {args.model} немає"
+    return "\n".join(map(repr, rows)) or f"Список {MODEL_NAMES_UA[args.model][2]} порожній"
 
 
 def get_or_none(session, args):
@@ -87,7 +97,7 @@ def get_or_none(session, args):
         return None, "Потрібно вказати --id"
     obj = session.get(model, args.id)
     if obj is None:
-        return None, f"{args.model} з id={args.id} не знайдено"
+        return None, f"{MODEL_NAMES_UA[args.model][1].capitalize()} з id={args.id} не знайдено"
     return obj, None
 
 
